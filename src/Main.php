@@ -45,7 +45,13 @@ class Main
             $out,
             OutputInterface $output
         ) {
-            $raw = $filesystem->read($path);
+            if (strpos($path, 'http://') !== false || strpos($path, 'https://') !== false) {
+                $response = $httpClient->request('get', $path);
+
+                $raw = $response->getBody();
+            } else {
+                $raw = $filesystem->read($path);
+            }
 
             $feed = $parser->parse($raw);
 
