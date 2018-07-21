@@ -1,0 +1,33 @@
+<?php
+
+use Feed\Feed;
+use PHPUnit\Framework\TestCase;
+
+class FeedTest extends TestCase
+{
+    public function testCreateAndOutFeed()
+    {
+        $rawFeed = <<<RSS
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Новые уроки на Хекслете</title>
+    <description>Практические уроки по программированию</description>
+    <link>https://ru.hexlet.io/</link>
+    <webMaster>info@hexlet.io</webMaster>
+    <item>
+      <title>Pipeline challenge / Главные испытания</title>
+      <guid isPermaLink="false">150</guid>
+      <link>https://ru.hexlet.io/courses/main/lessons/pipeline/theory_unit</link>
+      <description>Цель: Написать клиент, реализующий передачу сообщений в условиях канала передачи с помехами.</description>
+      <pubDate>Wed, 21 Jan 2015 08:59:51 +0000</pubDate>
+    </item>
+  </channel>
+</rss>
+RSS;
+
+        $feed = new Feed($rawFeed);
+
+        $this->assertEquals($rawFeed, $feed->out());
+    }
+}
