@@ -3,4 +3,7 @@
 
 require_once __DIR__ . '/../vendor/autoload.php';
 
-App\Main::main();
+$app = \Converter\AppFactory::createCliApp();
+
+$app->run();
+

@@ -1,5 +1,9 @@
-test-through-file:
-	bin/convert-feed run --out="atom" ./rss.xml
+test:
+	vendor/bin/phpunit --colors ./tests
 
-test-through-http:
+example-through-file:
+	bin/convert-feed run --out="atom" ./example/rss.xml
+
+example--through-http:
 	bin/convert-feed run --out="atom" "https://ru.hexlet.io/lessons.rss"
+

@@ -3,11 +3,19 @@
 use Feed\Feed;
 use PHPUnit\Framework\TestCase;
 
-class FeedTest extends TestCase
+class ConverterTest extends TestCase
 {
+    public function testWithoutPath()
+    {
+        $this->expectException(InvalidArgumentException::class);
+
+        $converter = new Converter\Converter();
+        $converter->convert();
+    }
+
     public function testCreateAndOutFeed()
     {
-        $rawFeed = <<<RSS
+        $raw = <<<RSS
 <?xml version="1.0" encoding="UTF-8"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
@@ -25,9 +33,19 @@ class FeedTest extends TestCase
   </channel>
 </rss>
 RSS;
+        $path = '/test.rss';
+        $filesystem = new \League\Flysystem\Filesystem(
+            new League\Flysystem\Memory\MemoryAdapter()
+        );
 
-        $feed = new Feed($rawFeed);
+        $filesystem->write($path, $raw);
 
-        $this->assertEquals($rawFeed, $feed->out());
+        $converter = new Converter\Converter([
+            'filesystem' => $filesystem
+        ]);
+
+        $this->assertEquals($raw, $converter->convert([
+            'path' => $path
+        ]));
     }
 }

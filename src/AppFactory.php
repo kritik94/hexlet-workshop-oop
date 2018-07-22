@@ -1,6 +1,6 @@
 <?php
 
-namespace App;
+namespace Converter;
 
 use DI\ContainerBuilder;
 use function DI\create;
@@ -12,9 +12,9 @@ use League\Flysystem\FilesystemInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
 
-class Main
+class AppFactory
 {
-    public static function main()
+    public static function createCliApp()
     {
         $containerBuilder = new ContainerBuilder();
         $containerBuilder->addDefinitions([
@@ -24,10 +24,6 @@ class Main
                 ->constructor(get('fileAdapter')),
             'fileAdapter' => create(Local::class)
                 ->constructor(getcwd(), 0),
-            'atomCompiler' => create(AtomCompiler::class),
-            'rssCompiler' => create(RssCompiler::class),
-            'atomParser' => create(AtomParser::class),
-            'rssParser' => create(RssParser::class)
         ]);
 
         $container = $containerBuilder->build();
@@ -37,33 +33,29 @@ class Main
         $app->useContainer($container, true, true);
 
         $app->command('run path [--out=]', function (
-            Parser $parser,
-            Compiler $compiler,
             ClientInterface $httpClient,
             FilesystemInterface $filesystem,
             $path,
             $out,
             OutputInterface $output
         ) {
-            if (strpos($path, 'http://') !== false || strpos($path, 'https://') !== false) {
-                $response = $httpClient->request('get', $path);
+            $converter = new Converter([
+                'httpClient' => $httpClient,
+                'filesystem' => $filesystem
+            ]);
 
-                $raw = $response->getBody();
-            } else {
-                $raw = $filesystem->read($path);
-            }
+            $result = $converter->convert([
+                'path' => $path,
+                'out' => $out
+            ]);
 
-            $feed = $parser->parse($raw);
-
-            $compiled = $compiler->compile($out, $feed);
-
-            $output->writeln($compiled);
+            $output->writeln($result);
         })->defaults([
             'out' => 'rss'
         ])->descriptions('Help convert and manipulate rss or atom feed', [
             '--out' => 'output format'
         ]);
 
-        $app->run();
+        return $app;
     }
 }
