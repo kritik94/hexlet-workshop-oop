@@ -10,11 +10,11 @@ class RssRenderTest extends TestCase
     /**
      * @dataProvider rssProvider
      */
-    public function testRender($feed, $atom)
+    public function testRender($feed, $xml)
     {
         $render = new \Converter\Render\RssRender();
 
-        $this->assertEquals($atom, $render->render($feed));
+        $this->assertXmlStringEqualsXmlString($xml, $render->render($feed));
     }
 
     public function rssProvider()
@@ -34,9 +34,9 @@ class RssRenderTest extends TestCase
         $anotherItemDescription = 'another description';
         $anotherItemCreated = 'Wed, 06 Jan 2010 13:00:00 +0000';
 
-        $rss = <<<FEED
+        $xml = <<<FEED
 <?xml version="1.0" encoding="UTF-8"?>
-<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0">
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>{$title}</title>
     <description>{$description}</description>
@@ -57,10 +57,9 @@ class RssRenderTest extends TestCase
     </item>
   </channel>
 </rss>
-
 FEED;
 
-        $expect = [
+        $feed = [
             'title' => $title,
             'description' => $description,
             'link' => $link,
@@ -83,7 +82,7 @@ FEED;
         ];
 
         return [
-            [$expect, $rss]
+            [$feed, $xml]
         ];
     }
 }

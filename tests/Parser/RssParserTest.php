@@ -10,11 +10,11 @@ class RssParserTest extends TestCase
     /**
      * @dataProvider rssProvider
      */
-    public function testParse($expect, $rss)
+    public function testParse($feed, $xml)
     {
         $parser = new \Converter\Parser\RssParser();
 
-        $this->assertEquals($expect, $parser->parse($rss));
+        $this->assertEquals($feed, $parser->parse($xml));
     }
 
     public function rssProvider()
@@ -34,7 +34,7 @@ class RssParserTest extends TestCase
         $anotherItemDescription = 'another description';
         $anotherItemCreated = 'Wed, 1 Jan 2010 13:00:00 +0000';
 
-        $rss = <<<FEED
+        $xml = <<<FEED
 <?xml version="1.0" encoding="UTF-8"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
@@ -57,10 +57,9 @@ class RssParserTest extends TestCase
     </item>
   </channel>
 </rss>
-
 FEED;
 
-        $expect = [
+        $feed = [
             'title' => $title,
             'description' => $description,
             'link' => $link,
@@ -83,7 +82,7 @@ FEED;
         ];
 
         return [
-            [$expect, $rss]
+            [$feed, $xml]
         ];
     }
 }

@@ -8,16 +8,16 @@ use Converter\Tests\TestCase;
 class AtomRenderTest extends TestCase
 {
     /**
-     * @dataProvider atomProvider
+     * @dataProvider xmlProvider
      */
-    public function testRender($feed, $atom)
+    public function testRender($feed, $xml)
     {
         $render = new \Converter\Render\AtomRender();
 
-        $this->assertEquals($atom, $render->render($feed));
+        $this->assertXmlStringEqualsXmlString($xml, $render->render($feed));
     }
 
-    public function atomProvider()
+    public function xmlProvider()
     {
         $title = 'title';
         $description = 'description';
@@ -34,7 +34,7 @@ class AtomRenderTest extends TestCase
         $anotherItemDescription = 'another description';
         $anotherItemCreated = '2002-02-01T13:00:00Z';
 
-        $atom = <<<FEED
+        $xml = <<<FEED
 <?xml version="1.0" encoding="UTF-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
   <title>{$title}</title>
@@ -55,7 +55,6 @@ class AtomRenderTest extends TestCase
     <published>{$anotherItemCreated}</published>
   </entry>
 </feed>
-
 FEED;
 
         $feed = [
@@ -81,7 +80,7 @@ FEED;
         ];
 
         return [
-            [$feed, $atom]
+            [$feed, $xml]
         ];
     }
 }

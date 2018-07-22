@@ -10,11 +10,11 @@ class AtomParserTest extends TestCase
     /**
      * @dataProvider atomProvider
      */
-    public function testParse($expect, $atom)
+    public function testParse($feed, $xml)
     {
         $parser = new \Converter\Parser\AtomParser();
 
-        $this->assertEquals($expect, $parser->parse($atom));
+        $this->assertEquals($feed, $parser->parse($xml));
     }
 
     public function atomProvider()
@@ -34,7 +34,7 @@ class AtomParserTest extends TestCase
         $anotherItemDescription = 'another description';
         $anotherItemCreated = '2002-02-01T13:00:00Z';
 
-        $atom = <<<FEED
+        $xml = <<<FEED
 <?xml version="1.0" encoding="UTF-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
   <title>{$title}</title>
@@ -57,7 +57,7 @@ class AtomParserTest extends TestCase
 </feed>
 FEED;
 
-        $expect = [
+        $feed = [
             'title' => $title,
             'description' => $description,
             'link' => $link,
@@ -80,7 +80,7 @@ FEED;
         ];
 
         return [
-            [$expect, $atom]
+            [$feed, $xml]
         ];
     }
 }
