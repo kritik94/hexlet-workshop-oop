@@ -99,6 +99,167 @@ class ConverterTest extends TestCase
         ]));
     }
 
+    /**
+     * @dataProvider sortProvider
+     */
+    public function testSort($inputXml, $outXml, $sort, $order)
+    {
+        /**
+         * @var Converter $converter
+         * @var FilesystemInterface $filesystem
+         */
+        $filesystem = $this->container->get(FilesystemInterface::class);
+        $converter = $this->container->get(Converter::class);
+
+        $path = '/test.xml';
+        $filesystem->write($path, $inputXml);
+
+        $this->assertXmlStringEqualsXmlString($outXml, $converter->convert([
+            'path' => $path,
+            'out' => 'rss',
+            'sortBy' => $sort,
+            'order' => $order
+        ]));
+    }
+
+    public function sortProvider()
+    {
+        $rss = <<<FEED
+<?xml version="1.0" encoding="UTF-8"?>
+<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0">
+  <channel>
+    <title>title</title>
+    <description>description</description>
+    <link>https://example.local/</link>
+    <item>
+      <title>item title 1</title>
+      <guid>1</guid>
+      <link>https://example.local/1</link>
+      <description>item description 1</description>
+      <pubDate>Tue, 04 Jan 2000 12:00:00 +0000</pubDate>
+    </item>
+    <item>
+      <title>item title 2</title>
+      <guid>2</guid>
+      <link>https://example.local/2</link>
+      <description>item description 2</description>
+      <pubDate>Sat, 01 Jan 2000 12:00:00 +0000</pubDate>
+    </item>
+    <item>
+      <title>item title 3</title>
+      <guid>3</guid>
+      <link>https://example.local/3</link>
+      <description>item description 3</description>
+      <pubDate>Tue, 04 Jan 2000 08:00:00 +0000</pubDate>
+    </item>
+  </channel>
+</rss>
+FEED;
+
+        $rssDesc = <<<FEED
+<?xml version="1.0" encoding="UTF-8"?>
+<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0">
+  <channel>
+    <title>title</title>
+    <description>description</description>
+    <link>https://example.local/</link>
+    <item>
+      <title>item title 3</title>
+      <guid>3</guid>
+      <link>https://example.local/3</link>
+      <description>item description 3</description>
+      <pubDate>Tue, 04 Jan 2000 08:00:00 +0000</pubDate>
+    </item>
+    <item>
+      <title>item title 2</title>
+      <guid>2</guid>
+      <link>https://example.local/2</link>
+      <description>item description 2</description>
+      <pubDate>Sat, 01 Jan 2000 12:00:00 +0000</pubDate>
+    </item>
+    <item>
+      <title>item title 1</title>
+      <guid>1</guid>
+      <link>https://example.local/1</link>
+      <description>item description 1</description>
+      <pubDate>Tue, 04 Jan 2000 12:00:00 +0000</pubDate>
+    </item>
+  </channel>
+</rss>
+FEED;
+
+        $rssSort = <<<FEED
+<?xml version="1.0" encoding="UTF-8"?>
+<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0">
+  <channel>
+    <title>title</title>
+    <description>description</description>
+    <link>https://example.local/</link>
+    <item>
+      <title>item title 2</title>
+      <guid>2</guid>
+      <link>https://example.local/2</link>
+      <description>item description 2</description>
+      <pubDate>Sat, 01 Jan 2000 12:00:00 +0000</pubDate>
+    </item>
+    <item>
+      <title>item title 3</title>
+      <guid>3</guid>
+      <link>https://example.local/3</link>
+      <description>item description 3</description>
+      <pubDate>Tue, 04 Jan 2000 08:00:00 +0000</pubDate>
+    </item>
+    <item>
+      <title>item title 1</title>
+      <guid>1</guid>
+      <link>https://example.local/1</link>
+      <description>item description 1</description>
+      <pubDate>Tue, 04 Jan 2000 12:00:00 +0000</pubDate>
+    </item>
+  </channel>
+</rss>
+FEED;
+
+        $rssSortDesc = <<<FEED
+<?xml version="1.0" encoding="UTF-8"?>
+<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0">
+  <channel>
+    <title>title</title>
+    <description>description</description>
+    <link>https://example.local/</link>
+    <item>
+      <title>item title 1</title>
+      <guid>1</guid>
+      <link>https://example.local/1</link>
+      <description>item description 1</description>
+      <pubDate>Tue, 04 Jan 2000 12:00:00 +0000</pubDate>
+    </item>
+    <item>
+      <title>item title 3</title>
+      <guid>3</guid>
+      <link>https://example.local/3</link>
+      <description>item description 3</description>
+      <pubDate>Tue, 04 Jan 2000 08:00:00 +0000</pubDate>
+    </item>
+    <item>
+      <title>item title 2</title>
+      <guid>2</guid>
+      <link>https://example.local/2</link>
+      <description>item description 2</description>
+      <pubDate>Sat, 01 Jan 2000 12:00:00 +0000</pubDate>
+    </item>
+  </channel>
+</rss>
+FEED;
+
+        return [
+            [$rss, $rss, null, 'asc'],
+            [$rss, $rssDesc, null, 'desc'],
+            [$rss, $rssSort, 'created', 'asc'],
+            [$rss, $rssSortDesc, 'created', 'desc'],
+        ];
+    }
+
     public function limitProvider()
     {
         $rss = <<<FEED

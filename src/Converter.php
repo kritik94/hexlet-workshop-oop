@@ -34,6 +34,8 @@ class Converter
         $path = $args['path'] ?? false;
         $out = $args['out'] ?? false;
         $limit = $args['limit'] ?? 0;
+        $sortBy = $args['sortBy'] ?? false;
+        $order = $args['order'] ?? 'asc';
 
         if (!$path) {
             throw new \InvalidArgumentException("path doesn't exists");
@@ -51,9 +53,11 @@ class Converter
 
         $feed = $parser->parse($raw);
 
-        $feed = $this->limit($feed, $limit);
+        $sortedFeed = $this->sort($feed, $sortBy);
+        $orderedFeed = $this->order($sortedFeed, $order);
+        $limitedFeed = $this->limit($orderedFeed, $limit);
 
-        return $render->render($feed);
+        return $render->render($limitedFeed);
     }
 
     public function limit($feed, $limit)
@@ -65,5 +69,32 @@ class Converter
         return array_merge($feed, [
             'items' => array_splice($feed['items'], 0, $limit)
         ]);
+    }
+
+    public function sort($feed, $sortBy)
+    {
+        if ($sortBy === false) {
+            return $feed;
+        }
+
+        $items = $feed['items'];
+
+        usort($items, function ($a, $b) {
+            return $a['created'] <=> $b['created'];
+        });
+
+        return array_merge($feed, ['items' => $items]);
+    }
+
+    public function order($feed, $order)
+    {
+        if ($order !== 'desc') {
+            return $feed;
+        }
+
+        $items = $feed['items'];
+        krsort($items);
+
+        return array_merge($feed, ['items' => $items]);
     }
 }

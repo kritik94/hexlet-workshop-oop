@@ -31,20 +31,29 @@ class AppFactory
 
         $app->useContainer($container, true, true);
 
-        $app->command('run path [--out=]', function (
+        $app->command('run path [--out=] [--sort-by=] [--order=] [--limit=]', function (
             $path,
             $out,
+            $sortBy,
+            $order,
+            $limit,
             Converter $converter,
             OutputInterface $output
         ) {
             $result = $converter->convert([
                 'path' => $path,
-                'out' => $out
+                'out' => $out,
+                'sortBy' => $sortBy,
+                'order' => $order,
+                'limit' => $limit
             ]);
 
             $output->writeln($result);
         })->defaults([
-            'out' => 'rss'
+            'out' => 'rss',
+            'sort-by' => false,
+            'order' => 'asc',
+            'limit' => 0
         ])->descriptions('Help convert and manipulate rss or atom feed', [
             '--out' => 'output format'
         ]);
