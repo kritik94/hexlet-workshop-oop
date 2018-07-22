@@ -1,6 +1,8 @@
 <?php
 
-use PHPUnit\Framework\TestCase;
+namespace Converter\Tests\Parser;
+
+use Converter\Tests\TestCase;
 
 class ParserStrategyTest extends TestCase
 {

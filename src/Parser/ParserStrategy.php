@@ -4,8 +4,8 @@ namespace Converter\Parser;
 
 class ParserStrategy
 {
-    private const LIKE_ATOM = '<feed xmlns="http://www.w3.org/2005/Atom">';
-    private const LIKE_RSS = '<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">';
+    private const LIKE_ATOM = '<feed';
+    private const LIKE_RSS = '<rss';
 
     /**
      * @param $raw

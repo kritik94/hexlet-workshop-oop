@@ -1,19 +1,19 @@
 <?php
 
-namespace Converter\Tests\Parser;
+namespace Converter\Tests\Render;
 
 use Converter\Tests\TestCase;
 
-class AtomParserTest extends TestCase
+class AtomRenderTest extends TestCase
 {
     /**
      * @dataProvider atomProvider
      */
-    public function testParse($expect, $atom)
+    public function testRender($feed, $atom)
     {
-        $parser = new \Converter\Parser\AtomParser();
+        $render = new \Converter\Render\AtomRender();
 
-        $this->assertEquals($expect, $parser->parse($atom));
+        $this->assertEquals($atom, $render->render($feed));
     }
 
     public function atomProvider()
@@ -54,9 +54,10 @@ class AtomParserTest extends TestCase
     <updated>{$anotherItemCreated}</updated>
   </entry>
 </feed>
+
 FEED;
 
-        $expect = [
+        $feed = [
             'title' => $title,
             'description' => $description,
             'link' => $link,
@@ -79,7 +80,7 @@ FEED;
         ];
 
         return [
-            [$expect, $atom]
+            [$feed, $atom]
         ];
     }
 }

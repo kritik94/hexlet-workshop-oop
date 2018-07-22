@@ -1,6 +1,8 @@
 <?php
 
-use PHPUnit\Framework\TestCase;
+namespace Converter\Tests\Parser;
+
+use Converter\Tests\TestCase;
 
 class RssParserTest extends TestCase
 {
@@ -34,26 +36,27 @@ class RssParserTest extends TestCase
         $rss = <<<FEED
 <?xml version="1.0" encoding="UTF-8"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
-    <channel>
-        <title>{$title}</title>
-        <description>{$description}</description>
-        <link>{$link}</link>
-        <item>
-            <title>{$itemTitle}</title>
-            <guid>{$itemId}</guid>
-            <link>{$itemLink}</link>
-            <description>{$itemDescription}</description>
-            <pubDate>{$itemCreated}</pubDate>
-        </item>
-        <item>
-            <title>{$anotherItemTitle}</title>
-            <guid>{$anotherItemId}</guid>
-            <link>{$anotherItemLink}</link>
-            <description>{$anotherItemDescription}</description>
-            <pubDate>{$anotherItemCreated}</pubDate>
-        </item>
-    </channel>
+  <channel>
+    <title>{$title}</title>
+    <description>{$description}</description>
+    <link>{$link}</link>
+    <item>
+      <title>{$itemTitle}</title>
+      <guid>{$itemId}</guid>
+      <link>{$itemLink}</link>
+      <description>{$itemDescription}</description>
+      <pubDate>{$itemCreated}</pubDate>
+    </item>
+    <item>
+      <title>{$anotherItemTitle}</title>
+      <guid>{$anotherItemId}</guid>
+      <link>{$anotherItemLink}</link>
+      <description>{$anotherItemDescription}</description>
+      <pubDate>{$anotherItemCreated}</pubDate>
+    </item>
+  </channel>
 </rss>
+
 FEED;
 
         $expect = [

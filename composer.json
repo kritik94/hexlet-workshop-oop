@@ -4,6 +4,11 @@
             "Converter\\": "src/"
         }
     },
+    "autoload-dev": {
+        "psr-4": {
+            "Converter\\Tests\\": "tests/"
+        }
+    },
     "name": "nikitaarhipov/hexlet-workshop-oop",
     "authors": [
         {

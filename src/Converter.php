@@ -4,6 +4,7 @@ namespace Converter;
 
 use Converter\Parser\ParserStrategy;
 use Converter\Reader\ReaderStrategy;
+use Converter\Render\RenderStrategy;
 use GuzzleHttp\ClientInterface;
 use League\Flysystem\FilesystemInterface;
 
@@ -45,12 +46,10 @@ class Converter
         $raw = $reader->read($path);
 
         $parser = ParserStrategy::getParserByRaw($raw);
-//        $render = RenderStrategy::getRenderByFormat($out);
+        $render = RenderStrategy::getRenderByFormat($out);
 
         $feed = $parser->parse($raw);
 
-        var_dump($feed);
-
-//        return $render->render($feed);
+        return $render->render($feed);
     }
 }

@@ -1,22 +1,22 @@
 <?php
 
-namespace Converter\Tests\Parser;
+namespace Converter\Tests\Render;
 
 use Converter\Tests\TestCase;
 
-class AtomParserTest extends TestCase
+class RssRenderTest extends TestCase
 {
     /**
-     * @dataProvider atomProvider
+     * @dataProvider rssProvider
      */
-    public function testParse($expect, $atom)
+    public function testRender($feed, $atom)
     {
-        $parser = new \Converter\Parser\AtomParser();
+        $render = new \Converter\Render\RssRender();
 
-        $this->assertEquals($expect, $parser->parse($atom));
+        $this->assertEquals($atom, $render->render($feed));
     }
 
-    public function atomProvider()
+    public function rssProvider()
     {
         $title = 'title';
         $description = 'description';
@@ -33,27 +33,30 @@ class AtomParserTest extends TestCase
         $anotherItemDescription = 'another description';
         $anotherItemCreated = 'Wed, 1 Jan 2010 13:00:00 +0000';
 
-        $atom = <<<FEED
+        $rss = <<<FEED
 <?xml version="1.0" encoding="UTF-8"?>
-<feed xmlns="http://www.w3.org/2005/Atom">
-  <title>{$title}</title>
-  <subtitle>{$description}</subtitle>
-  <link>{$link}</link>
-  <entry>
-    <title>{$itemTitle}</title>
-    <id>{$itemId}</id>
-    <link>{$itemLink}</link>
-    <summary>{$itemDescription}</summary>
-    <updated>{$itemCreated}</updated>
-  </entry>
-  <entry>
-    <title>{$anotherItemTitle}</title>
-    <id>{$anotherItemId}</id>
-    <link>{$anotherItemLink}</link>
-    <summary>{$anotherItemDescription}</summary>
-    <updated>{$anotherItemCreated}</updated>
-  </entry>
-</feed>
+<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0">
+  <channel>
+    <title>{$title}</title>
+    <description>{$description}</description>
+    <link>{$link}</link>
+    <item>
+      <title>{$itemTitle}</title>
+      <guid>{$itemId}</guid>
+      <link>{$itemLink}</link>
+      <description>{$itemDescription}</description>
+      <pubDate>{$itemCreated}</pubDate>
+    </item>
+    <item>
+      <title>{$anotherItemTitle}</title>
+      <guid>{$anotherItemId}</guid>
+      <link>{$anotherItemLink}</link>
+      <description>{$anotherItemDescription}</description>
+      <pubDate>{$anotherItemCreated}</pubDate>
+    </item>
+  </channel>
+</rss>
+
 FEED;
 
         $expect = [
@@ -79,7 +82,7 @@ FEED;
         ];
 
         return [
-            [$expect, $atom]
+            [$expect, $rss]
         ];
     }
 }
