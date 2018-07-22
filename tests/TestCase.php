@@ -4,17 +4,17 @@ namespace Converter\Tests;
 
 use Converter\Converter;
 use DI;
+use DI\Container;
 use DI\ContainerBuilder;
 use GuzzleHttp\ClientInterface;
 use League\Flysystem\Filesystem;
 use League\Flysystem\FilesystemInterface;
 use League\Flysystem\Memory\MemoryAdapter;
-use Psr\Container\ContainerInterface;
 
 class TestCase extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var ContainerInterface
+     * @var Container
      */
     protected $container;
 

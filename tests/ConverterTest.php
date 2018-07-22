@@ -3,8 +3,13 @@
 namespace Converter\Tests;
 
 use Converter\Converter;
+use GuzzleHttp\Client;
+use GuzzleHttp\ClientInterface;
+use GuzzleHttp\Handler\MockHandler;
+use GuzzleHttp\Psr7\Response;
 use InvalidArgumentException;
 use League\Flysystem\FilesystemInterface;
+use DI;
 
 class ConverterTest extends TestCase
 {
@@ -28,7 +33,7 @@ class ConverterTest extends TestCase
      *
      * @throws \League\Flysystem\FileExistsException
      */
-    public function testConvert($inputFeed, $outFeed, $out)
+    public function testConvertFromPath($inputXml, $outXml, $format)
     {
         /**
          * @var Converter $converter
@@ -38,11 +43,39 @@ class ConverterTest extends TestCase
         $converter = $this->container->get(Converter::class);
 
         $path = '/test.xml';
-        $filesystem->write($path, $inputFeed);
+        $filesystem->write($path, $inputXml);
 
-        $this->assertEquals($outFeed, $converter->convert([
+        $this->assertXmlStringEqualsXmlString($outXml, $converter->convert([
             'path' => $path,
-            'out' => $out
+            'out' => $format
+        ]));
+    }
+
+    /**
+     * @dataProvider feedProvider
+     */
+    public function testConvertFromHttp($inputXml, $outXml, $format)
+    {
+        $this->container->set(ClientInterface::class, DI\factory(function () use ($inputXml) {
+            $mockHandler = new MockHandler([
+                new Response(200, [], $inputXml)
+            ]);
+
+            return new Client([
+                'handler' => $mockHandler
+            ]);
+        }));
+
+        /**
+         * @var Converter $converter
+         */
+        $converter = $this->container->get(Converter::class);
+
+        $httpPath = 'https://example.local/feed.rss';
+
+        $this->assertXmlStringEqualsXmlString($outXml, $converter->convert([
+            'path' => $httpPath,
+            'out' => $format
         ]));
     }
 
@@ -64,7 +97,6 @@ class ConverterTest extends TestCase
     </item>
   </channel>
 </rss>
-
 FEED;
 
         $atom = <<<FEED
@@ -81,7 +113,6 @@ FEED;
     <published>2000-01-01T12:00:00Z</published>
   </entry>
 </feed>
-
 FEED;
 
         return [
