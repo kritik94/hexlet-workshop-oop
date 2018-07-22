@@ -33,6 +33,7 @@ class Converter
     {
         $path = $args['path'] ?? false;
         $out = $args['out'] ?? false;
+        $limit = $args['limit'] ?? 0;
 
         if (!$path) {
             throw new \InvalidArgumentException("path doesn't exists");
@@ -50,6 +51,19 @@ class Converter
 
         $feed = $parser->parse($raw);
 
+        $feed = $this->limit($feed, $limit);
+
         return $render->render($feed);
+    }
+
+    public function limit($feed, $limit)
+    {
+        if ($limit === 0) {
+            return $feed;
+        }
+
+        return array_merge($feed, [
+            'items' => array_splice($feed['items'], 0, $limit)
+        ]);
     }
 }

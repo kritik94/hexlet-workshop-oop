@@ -30,8 +30,6 @@ class ConverterTest extends TestCase
 
     /**
      * @dataProvider feedProvider
-     *
-     * @throws \League\Flysystem\FileExistsException
      */
     public function testConvertFromPath($inputXml, $outXml, $format)
     {
@@ -77,6 +75,101 @@ class ConverterTest extends TestCase
             'path' => $httpPath,
             'out' => $format
         ]));
+    }
+
+    /**
+     * @dataProvider limitProvider
+     */
+    public function testLimit($inputXml, $outXml, $limit)
+    {
+        /**
+         * @var Converter $converter
+         * @var FilesystemInterface $filesystem
+         */
+        $filesystem = $this->container->get(FilesystemInterface::class);
+        $converter = $this->container->get(Converter::class);
+
+        $path = '/test.xml';
+        $filesystem->write($path, $inputXml);
+
+        $this->assertXmlStringEqualsXmlString($outXml, $converter->convert([
+            'path' => $path,
+            'out' => 'rss',
+            'limit' => $limit
+        ]));
+    }
+
+    public function limitProvider()
+    {
+        $rss = <<<FEED
+<?xml version="1.0" encoding="UTF-8"?>
+<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0">
+  <channel>
+    <title>title</title>
+    <description>description</description>
+    <link>https://example.local/</link>
+    <item>
+      <title>item title 1</title>
+      <guid>1</guid>
+      <link>https://example.local/1</link>
+      <description>item description 1</description>
+      <pubDate>Sat, 01 Jan 2000 12:00:00 +0000</pubDate>
+    </item>
+    <item>
+      <title>item title 2</title>
+      <guid>2</guid>
+      <link>https://example.local/2</link>
+      <description>item description 2</description>
+      <pubDate>Tue, 04 Jan 2000 12:00:00 +0000</pubDate>
+    </item>
+    <item>
+      <title>item title 3</title>
+      <guid>3</guid>
+      <link>https://example.local/3</link>
+      <description>item description 3</description>
+      <pubDate>Mon, 03 Jan 2000 12:00:00 +0000</pubDate>
+    </item>
+    <item>
+      <title>item title 4</title>
+      <guid>4</guid>
+      <link>https://example.local/4</link>
+      <description>item description 4</description>
+      <pubDate>Thu, 06 Jan 2000 09:00:00 +0000</pubDate>
+    </item>
+  </channel>
+</rss>
+FEED;
+        $rssLimit = <<<FEED
+<?xml version="1.0" encoding="UTF-8"?>
+<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0">
+  <channel>
+    <title>title</title>
+    <description>description</description>
+    <link>https://example.local/</link>
+    <item>
+      <title>item title 1</title>
+      <guid>1</guid>
+      <link>https://example.local/1</link>
+      <description>item description 1</description>
+      <pubDate>Sat, 01 Jan 2000 12:00:00 +0000</pubDate>
+    </item>
+    <item>
+      <title>item title 2</title>
+      <guid>2</guid>
+      <link>https://example.local/2</link>
+      <description>item description 2</description>
+      <pubDate>Tue, 04 Jan 2000 12:00:00 +0000</pubDate>
+    </item>
+  </channel>
+</rss>
+FEED;
+
+
+        return [
+            [$rss, $rss, 0],
+            [$rss, $rssLimit, 2],
+            [$rss, $rss, 4]
+        ];
     }
 
     public function feedProvider()
