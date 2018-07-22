@@ -2,19 +2,32 @@
 
 namespace Converter;
 
+use Converter\Parser\ParserStrategy;
 use Converter\Reader\ReaderStrategy;
-use GuzzleHttp\Client;
-use League\Flysystem\Adapter\Local;
-use League\Flysystem\Filesystem;
+use GuzzleHttp\ClientInterface;
+use League\Flysystem\FilesystemInterface;
 
 class Converter
 {
-    public function __construct($opts = [])
+    private $httpClient;
+    private $filesystem;
+
+    /**
+     * @Inject
+     * @param ClientInterface $httpClient
+     * @param FilesystemInterface $filesystem
+     */
+    public function __construct(ClientInterface $httpClient, FilesystemInterface $filesystem)
     {
-        $this->httpClient = $opts['httpClient'] ?? new Client();
-        $this->filesystem = $opts['filesystem'] ?? new Filesystem(new Local(getcwd()));
+        $this->httpClient = $httpClient;
+        $this->filesystem = $filesystem;
     }
 
+    /**
+     * @param array $args
+     * @return mixed
+     * @throws \Exception
+     */
     public function convert($args = [])
     {
         $path = $args['path'] ?? false;
@@ -32,10 +45,12 @@ class Converter
         $raw = $reader->read($path);
 
         $parser = ParserStrategy::getParserByRaw($raw);
-        $render = RenderStrategy::getRenderByFormat($out);
+//        $render = RenderStrategy::getRenderByFormat($out);
 
-        $feed = $parser($raw);
+        $feed = $parser->parse($raw);
 
-        return $render->render($feed);
+        var_dump($feed);
+
+//        return $render->render($feed);
     }
 }

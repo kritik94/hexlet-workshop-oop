@@ -2,9 +2,8 @@
 
 namespace Converter;
 
+use DI;
 use DI\ContainerBuilder;
-use function DI\create;
-use function DI\get;
 use GuzzleHttp\ClientInterface;
 use League\Flysystem\Adapter\Local;
 use League\Flysystem\Filesystem;
@@ -17,13 +16,13 @@ class AppFactory
     public static function createCliApp()
     {
         $containerBuilder = new ContainerBuilder();
+        $containerBuilder->useAnnotations(true);
         $containerBuilder->addDefinitions([
-            'httpClient' => create(\GuzzleHttp\Client::class)
-                ->constructor(),
-            'filesystem' => create(Filesystem::class)
-                ->constructor(get('fileAdapter')),
-            'fileAdapter' => create(Local::class)
-                ->constructor(getcwd(), 0),
+            ClientInterface::class => DI\create(\GuzzleHttp\Client::class),
+            FilesystemInterface::class => DI\factory(function () {
+                return new Filesystem(new Local(getcwd()));
+            }),
+            Converter::class => DI\autowire()
         ]);
 
         $container = $containerBuilder->build();
@@ -33,17 +32,11 @@ class AppFactory
         $app->useContainer($container, true, true);
 
         $app->command('run path [--out=]', function (
-            ClientInterface $httpClient,
-            FilesystemInterface $filesystem,
             $path,
             $out,
+            Converter $converter,
             OutputInterface $output
         ) {
-            $converter = new Converter([
-                'httpClient' => $httpClient,
-                'filesystem' => $filesystem
-            ]);
-
             $result = $converter->convert([
                 'path' => $path,
                 'out' => $out
