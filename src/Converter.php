@@ -29,6 +29,13 @@ class Converter
             'filesystem' => $this->filesystem
         ]);
 
-        return $reader->read($path);
+        $raw = $reader->read($path);
+
+        $parser = ParserStrategy::getParserByRaw($raw);
+        $render = RenderStrategy::getRenderByFormat($out);
+
+        $feed = $parser($raw);
+
+        return $render->render($feed);
     }
 }
