@@ -2,6 +2,7 @@
 
 namespace Converter\Tests\Render;
 
+use Carbon\Carbon;
 use Converter\Tests\TestCase;
 
 class AtomRenderTest extends TestCase
@@ -25,13 +26,13 @@ class AtomRenderTest extends TestCase
         $itemId = '1';
         $itemLink = 'https://example.local/1';
         $itemDescription = 'i description';
-        $itemCreated = 'Wed, 1 Jan 2000 12:00:00 +0000';
+        $itemCreated = '2001-01-01T12:00:00Z';
 
         $anotherItemTitle = 'another title';
         $anotherItemId = '2';
         $anotherItemLink = 'https://example.local/2';
         $anotherItemDescription = 'another description';
-        $anotherItemCreated = 'Wed, 1 Jan 2010 13:00:00 +0000';
+        $anotherItemCreated = '2002-02-01T13:00:00Z';
 
         $atom = <<<FEED
 <?xml version="1.0" encoding="UTF-8"?>
@@ -44,14 +45,14 @@ class AtomRenderTest extends TestCase
     <id>{$itemId}</id>
     <link>{$itemLink}</link>
     <summary>{$itemDescription}</summary>
-    <updated>{$itemCreated}</updated>
+    <published>{$itemCreated}</published>
   </entry>
   <entry>
     <title>{$anotherItemTitle}</title>
     <id>{$anotherItemId}</id>
     <link>{$anotherItemLink}</link>
     <summary>{$anotherItemDescription}</summary>
-    <updated>{$anotherItemCreated}</updated>
+    <published>{$anotherItemCreated}</published>
   </entry>
 </feed>
 
@@ -67,14 +68,14 @@ FEED;
                     'id' => $itemId,
                     'link' => $itemLink,
                     'description' => $itemDescription,
-                    'created' => $itemCreated
+                    'created' => Carbon::parse($itemCreated)
                 ],
                 [
                     'title' => $anotherItemTitle,
                     'id' => $anotherItemId,
                     'link' => $anotherItemLink,
                     'description' => $anotherItemDescription,
-                    'created' => $anotherItemCreated
+                    'created' => Carbon::parse($anotherItemCreated)
                 ]
             ]
         ];

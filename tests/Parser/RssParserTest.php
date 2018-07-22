@@ -2,6 +2,7 @@
 
 namespace Converter\Tests\Parser;
 
+use Carbon\Carbon;
 use Converter\Tests\TestCase;
 
 class RssParserTest extends TestCase
@@ -69,14 +70,14 @@ FEED;
                     'id' => $itemId,
                     'link' => $itemLink,
                     'description' => $itemDescription,
-                    'created' => $itemCreated
+                    'created' => Carbon::parse($itemCreated)
                 ],
                 [
                     'title' => $anotherItemTitle,
                     'id' => $anotherItemId,
                     'link' => $anotherItemLink,
                     'description' => $anotherItemDescription,
-                    'created' => $anotherItemCreated
+                    'created' => Carbon::parse($anotherItemCreated)
                 ]
             ]
         ];

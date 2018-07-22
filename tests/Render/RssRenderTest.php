@@ -2,6 +2,7 @@
 
 namespace Converter\Tests\Render;
 
+use Carbon\Carbon;
 use Converter\Tests\TestCase;
 
 class RssRenderTest extends TestCase
@@ -25,13 +26,13 @@ class RssRenderTest extends TestCase
         $itemId = '1';
         $itemLink = 'https://example.local/1';
         $itemDescription = 'i description';
-        $itemCreated = 'Wed, 1 Jan 2000 12:00:00 +0000';
+        $itemCreated = 'Wed, 05 Jan 2000 12:00:00 +0000';
 
         $anotherItemTitle = 'another title';
         $anotherItemId = '2';
         $anotherItemLink = 'https://example.local/2';
         $anotherItemDescription = 'another description';
-        $anotherItemCreated = 'Wed, 1 Jan 2010 13:00:00 +0000';
+        $anotherItemCreated = 'Wed, 06 Jan 2010 13:00:00 +0000';
 
         $rss = <<<FEED
 <?xml version="1.0" encoding="UTF-8"?>
@@ -69,14 +70,14 @@ FEED;
                     'id' => $itemId,
                     'link' => $itemLink,
                     'description' => $itemDescription,
-                    'created' => $itemCreated
+                    'created' => Carbon::parse($itemCreated)
                 ],
                 [
                     'title' => $anotherItemTitle,
                     'id' => $anotherItemId,
                     'link' => $anotherItemLink,
                     'description' => $anotherItemDescription,
-                    'created' => $anotherItemCreated
+                    'created' => Carbon::parse($anotherItemCreated)
                 ]
             ]
         ];

@@ -24,7 +24,7 @@ XML;
             $xmlItem->addChild('id', $item['id']);
             $xmlItem->addChild('link', $item['link']);
             $xmlItem->addChild('summary', $item['description']);
-            $xmlItem->addChild('updated', $item['created']);
+            $xmlItem->addChild('published', $item['created']->toIso8601ZuluString());
         }
 
         $doc = new \DomDocument('1.0');

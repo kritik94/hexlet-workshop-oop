@@ -2,11 +2,14 @@
 
 namespace Converter\Parser;
 
+use Carbon\Carbon;
+use SimpleXMLElement;
+
 class AtomParser implements ParserInterface
 {
     public function parse($raw)
     {
-        $xml = new \SimpleXMLElement($raw);
+        $xml = new SimpleXMLElement($raw);
 
         $items = [];
         foreach ($xml->entry as $item) {
@@ -15,7 +18,7 @@ class AtomParser implements ParserInterface
                 'id' => (string) $item->id,
                 'link' => (string) $item->link,
                 'description' => (string) $item->summary,
-                'created' => (string) $item->updated
+                'created' => Carbon::parse((string) $item->published)
             ];
         }
 

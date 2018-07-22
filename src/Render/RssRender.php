@@ -26,7 +26,7 @@ XML;
             $xmlItem->addChild('guid', $item['id']);
             $xmlItem->addChild('link', $item['link']);
             $xmlItem->addChild('description', $item['description']);
-            $xmlItem->addChild('pubDate', $item['created']);
+            $xmlItem->addChild('pubDate', $item['created']->toRfc1123String());
         }
 
         $doc = new \DomDocument('1.0');

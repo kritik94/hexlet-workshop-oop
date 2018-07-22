@@ -60,7 +60,7 @@ class ConverterTest extends TestCase
       <guid>150</guid>
       <link>https://ru.hexlet.io/courses/main/lessons/pipeline/theory_unit</link>
       <description>Цель: Написать клиент, реализующий передачу сообщений в условиях канала передачи с помехами.</description>
-      <pubDate>Wed, 21 Jan 2015 08:59:51 +0000</pubDate>
+      <pubDate>Sat, 01 Jan 2000 12:00:00 +0000</pubDate>
     </item>
   </channel>
 </rss>
@@ -78,7 +78,7 @@ FEED;
     <id>150</id>
     <link>https://ru.hexlet.io/courses/main/lessons/pipeline/theory_unit</link>
     <summary>Цель: Написать клиент, реализующий передачу сообщений в условиях канала передачи с помехами.</summary>
-    <updated>Wed, 21 Jan 2015 08:59:51 +0000</updated>
+    <published>2000-01-01T12:00:00Z</published>
   </entry>
 </feed>
 

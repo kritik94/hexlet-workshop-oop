@@ -2,11 +2,14 @@
 
 namespace Converter\Parser;
 
+use Carbon\Carbon;
+use SimpleXMLElement;
+
 class RssParser implements ParserInterface
 {
     public function parse($raw)
     {
-        $xml = new \SimpleXMLElement($raw);
+        $xml = new SimpleXMLElement($raw);
 
         $items = [];
         foreach ($xml->channel->item as $item) {
@@ -15,7 +18,7 @@ class RssParser implements ParserInterface
                 'id' => (string) $item->guid,
                 'link' => (string) $item->link,
                 'description' => (string) $item->description,
-                'created' => (string) $item->pubDate
+                'created' => Carbon::parse((string) $item->pubDate)
             ];
         }
 
